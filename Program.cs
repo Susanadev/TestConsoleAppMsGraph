@@ -5,7 +5,7 @@ using Microsoft.Graph;
 var scopes = new[] { "User.Read","User.Read.All","Sites.Read.All"};
 var interactiveBrowserCredentialOptions = new InteractiveBrowserCredentialOptions
 {
-  ClientId = "9b649747-f5a3-45a8-aee7-f7549a04b2e8""
+  ClientId = "9b649747-f5a3-45a8-aee7-f7549a04b2e8"
 };
 var tokenCredential = new InteractiveBrowserCredential(interactiveBrowserCredentialOptions);
 
