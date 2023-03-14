@@ -2,7 +2,7 @@ using Azure.Identity;
 using Microsoft.Graph;
 
 
-var scopes = new[] { "User.Read","User.Read.All","Sites.Read.All"};
+var scopes = new[] { "User.Read","User.Read.All","Organization.Read.All"};
 var interactiveBrowserCredentialOptions = new InteractiveBrowserCredentialOptions
 {
   ClientId = "9b649747-f5a3-45a8-aee7-f7549a04b2e8"
@@ -10,98 +10,54 @@ var interactiveBrowserCredentialOptions = new InteractiveBrowserCredentialOption
 var tokenCredential = new InteractiveBrowserCredential(interactiveBrowserCredentialOptions);
 
 var graphClient = new GraphServiceClient(tokenCredential, scopes);
+int optionselected=0;
+string inputvalue=string.Empty;
 
 var me = await graphClient.Me.GetAsync();
 Console.WriteLine($"Hello {me?.DisplayName}!");
 
-//var users = await graphClient.Users.GetAsync();
+do{
+    Console.WriteLine($"\nEnter an Option or Type in exit to END application");
+    Console.WriteLine($"(1) List licenses in the tenant");
+    Console.WriteLine($"(2) List licenses assigned to me\n");
 
-/* var licenses = await graphClient.SubscribedSkus.GetAsync();
+    inputvalue = Console.ReadLine()!;
+    if(!string.IsNullOrEmpty(inputvalue))
+    {
+          if(inputvalue.Equals("exit"))
+            break;
+          else
+              int.TryParse(inputvalue, out optionselected);
+          
+          if(optionselected==1)
+          {
+              //Get the list of commercial subscriptions that an organization has acquired
+              var licenses = await graphClient.SubscribedSkus.GetAsync();
 
-Console.WriteLine($"List of Licenses in tenant:");
+              Console.WriteLine($"\nLICENSES IN TENANT");
 
-foreach(var license in licenses.Value)
-{
-  Console.WriteLine(license.SkuPartNumber + "  " + license.SkuId + "  " + license.ConsumedUnits);
-}
+              foreach(var license in licenses?.Value!)
+              {
+                Console.WriteLine($"SkuId: {license.SkuId }  \tConsumed units: {license.ConsumedUnits} \tSkuPart Number: {license.SkuPartNumber}");
+              }
+          }
+          else if (optionselected==2)
+          {
+              var mylicenses = await graphClient.Me.LicenseDetails.GetAsync();
+              Console.WriteLine($"\nYou have {mylicenses!.Value!.Count} licenses assigned");
 
-var users = await graphClient.Users.GetAsync((requestConfiguration) =>
-{
-	requestConfiguration.QueryParameters.Select = new string []{"id", "displayName","mail" };
-});
-
-foreach( var user in users.Value)
-{
-  Console.WriteLine(user.Id + ": " + user.DisplayName + " <" + user.Mail + ">");
-}
-
-var mylicenses = await graphClient.Me.LicenseDetails.GetAsync();
-
-Console.WriteLine("mylicenses:");
-Console.WriteLine($"I have "+mylicenses.Value.Count+ "assigned");
-
-foreach(var mylicense in mylicenses.Value)
-{
-
-  Console.WriteLine(mylicense.SkuPartNumber);
-} */
-
-// get user's files & folders in the root
-//var oneDriveRoot = await graphClient.Me.DriveGetAsync();
-                                  
-// display the results
-/*foreach (var driveItem in oneDriveRoot.Root)
-{
-  Console.WriteLine(driveItem.Id + ": " + driveItem.Name);
-}*/
-
-//Get files recently used and accessed by the currently signed-in user.
-var results = //await graphClient.Me.Insights.Used.GetAsync();
-await graphClient.Me.Insights.Used.GetAsync((requestConfiguration) =>
-{
-	requestConfiguration.QueryParameters.Count = true;
-});
-
-Console.WriteLine($"Files I have used or accessed:({results?.OdataCount?.ToString()}):");
-
-foreach (var item in results?.Value!)
-{
-  //if(item.ResourceVisualization?.MediaType!="text/html")
-  //{
-    
-    Console.WriteLine($"\n Name: {item.ResourceVisualization?.Title} - ({ item.ResourceVisualization?.Type})" );
-    Console.WriteLine($" Last Accessed: {item.LastUsed?.LastAccessedDateTime?.LocalDateTime.ToString()}");
-    Console.WriteLine($" Last Modified: {item.LastUsed?.LastModifiedDateTime?.LocalDateTime.ToString()}");
-    Console.WriteLine($" Link: {item.ResourceReference?.WebUrl}");
-    Console.WriteLine($" Preview text: { item.ResourceVisualization?.PreviewText}");
-  //}
-}
-
-//Get trending files around a specific user (me)
-var trendingfiles = await graphClient.Me.Insights.Trending.GetAsync();
-                                
-Console.WriteLine($"\n Files trending around me: ({trendingfiles?.Value?.Count.ToString()}):");
-
-foreach (var trendingfile in trendingfiles?.Value!)
-{
-    Console.WriteLine($"\n Name: {trendingfile.ResourceVisualization?.Title } - ({trendingfile.ResourceVisualization?.Type})");
-    Console.WriteLine($"  Weight: {trendingfile.Weight}");
-    Console.WriteLine($"  Preview Text: { trendingfile.ResourceVisualization?.PreviewText}");
-    Console.WriteLine($"  Item Link: { trendingfile.ResourceReference?.WebUrl}");
-}
-
-//var sharedFiles = await graphClient.Me.Insights.Shared.GetAsync();
-
-var sharedFiles = await graphClient.Me.Insights.Shared.GetAsync((requestConfiguration) =>
-{
-	requestConfiguration.QueryParameters.Count = true;
-});
-
-Console.WriteLine($"\n Files shared with me:" + sharedFiles?.OdataCount.ToString());
-
-foreach(var sharedfile in sharedFiles?.Value!)
-{
-  Console.WriteLine($"Name: {sharedfile.ResourceVisualization?.Title } - Type:  {sharedfile.ResourceVisualization?.Type}");
-  Console.WriteLine($"Shared by: {sharedfile.LastShared?.SharedBy}");
-  Console.WriteLine($"Share date: {sharedfile.LastShared?.SharedDateTime?.LocalDateTime.ToString()}");
-}
+              foreach(var mylicense in mylicenses.Value)
+              {
+                  Console.WriteLine($"SkuId: {mylicense.SkuId } \tSkuPart Number: {mylicense.SkuPartNumber}");
+              }      
+          }
+          else 
+          {
+            Console.WriteLine($"\nInput invalid, please try again!");
+          }
+    }
+    else
+    {
+        Console.WriteLine($"\nPlease enter a value!!");
+    }
+} while(!inputvalue.Equals("exit"));
