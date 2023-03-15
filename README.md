@@ -17,7 +17,7 @@ Future improvments:
 *Create a user who is new to organization and assign him license(s) 
 
 ![Output for Tenant Licenses](./TenantLicenses.png)
-![Output for signed User Licenses](./userLicenses.png)
+![Output for signed User Licenses](./userLicenses.jpg)
 
 
 [how to register and run the app ](https://github.com/microsoft/hack-together/blob/main/templates/dotnet-console-app-microsoft-graph/README.md)
