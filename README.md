@@ -22,3 +22,5 @@ Future improvments:
 
 [how to register and run the app ](https://github.com/microsoft/hack-together/blob/main/templates/dotnet-console-app-microsoft-graph/README.md)
 
+[![Hack Together: Microsoft Graph and .NET](https://img.shields.io/badge/Microsoft%20-Hack--Together-orange?style=for-the-badge&logo=microsoft)](https://github.com/microsoft/hack-together)
+
